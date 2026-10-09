@@ -1,0 +1,168 @@
+/* ============================================
+   EVENTFLOW THEME SYSTEM
+   Light & Dark Mode Management
+   ============================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light Mode (Default) */
+  .light {
+    --bg-primary: var(--warm-ivory);
+    --bg-secondary: var(--soft-cream);
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #FFFFFF;
+    --bg-overlay: rgba(0, 0, 0, 0.5);
+    
+    --text-primary: var(--charcoal);
+    --text-secondary: var(--charcoal-soft);
+    --text-muted: var(--charcoal-light);
+    --text-inverse: #FFFFFF;
+    --text-disabled: rgba(45, 45, 45, 0.3);
+    
+    --border-light: #E5E7EB;
+    --border-medium: #D1D5DB;
+    --border-dark: #9CA3AF;
+    
+    --surface-primary: #FFFFFF;
+    --surface-secondary: var(--soft-cream);
+    --surface-tertiary: #F9FAFB;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Dark Mode */
+  .dark {
+    --bg-primary: #0F0F23;
+    --bg-secondary: #16213E;
+    --bg-surface: #1A1A2E;
+    --bg-elevated: #1F1F3A;
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+    
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --text-inverse: var(--charcoal);
+    --text-disabled: rgba(255, 255, 255, 0.3);
+    
+    --border-light: rgba(255, 255, 255, 0.1);
+    --border-medium: rgba(255, 255, 255, 0.2);
+    --border-dark: rgba(255, 255, 255, 0.3);
+    
+    --surface-primary: #1A1A2E;
+    --surface-secondary: #16213E;
+    --surface-tertiary: #0F0F23;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@layer utilities {
+  /* Theme transition */
+  .theme-transition {
+    transition: background-color var(--transition-slow), 
+                color var(--transition-slow),
+                border-color var(--transition-slow);
+  }
+  
+  /* Background utilities */
+  .bg-primary {
+    background-color: var(--bg-primary);
+  }
+  
+  .bg-secondary {
+    background-color: var(--bg-secondary);
+  }
+  
+  .bg-surface {
+    background-color: var(--bg-surface);
+  }
+  
+  .bg-elevated {
+    background-color: var(--bg-elevated);
+  }
+  
+  /* Text utilities */
+  .text-primary {
+    color: var(--text-primary);
+  }
+  
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  
+  .text-muted {
+    color: var(--text-muted);
+  }
+  
+  /* Border utilities */
+  .border-light {
+    border-color: var(--border-light);
+  }
+  
+  .border-medium {
+    border-color: var(--border-medium);
+  }
+  
+  /* Surface utilities */
+  .surface-primary {
+    background-color: var(--surface-primary);
+  }
+  
+  .surface-secondary {
+    background-color: var(--surface-secondary);
+  }
+}
+
+/* ============================================
+   THEME TOGGLE ANIMATION
+   ============================================ */
+
+@keyframes themeTransition {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-animate {
+  animation: themeTransition var(--transition-slow) ease-out;
+}
+
+/* ============================================
+   SYSTEM PREFERENCE DETECTION
+   ============================================ */
+
+/* Default to system preference */
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --bg-primary: #0F0F23;
+    --bg-secondary: #16213E;
+    --bg-surface: #1A1A2E;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Force light mode on print */
+@media print {
+  html {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F9FAFB;
+    --bg-surface: #FFFFFF;
+    --text-primary: #000000;
+    --text-secondary: #374151;
+  }
+}

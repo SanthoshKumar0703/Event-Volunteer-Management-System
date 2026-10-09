@@ -1,0 +1,370 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Calendar, Clock, Users, Repeat, CheckCircle, XCircle, Save } from 'lucide-react';
+import Button from '../../components/common/Button';
+import Card from '../../components/common/Card';
+import Input from '../../components/common/Input';
+import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../utils/api';
+import { CreateShift } from '../../types/shift';
+
+const ShiftCreatePage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  const [formData, setFormData] = useState<CreateShift>({
+    name: '',
+    description: '',
+    eventId: '',
+    startTime: '',
+    endTime: '',
+    date: new Date().toISOString().split('T')[0],
+    capacity: 10,
+    color: '#FF7A33',
+    isRecurring: false,
+    recurrencePattern: undefined,
+    breakDuration: 0,
+    checkInStart: '',
+    checkInEnd: '',
+  });
+  
+  const [events, setEvents] = useState<{ _id: string; title: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await apiService.get<{ success: boolean; data: any[] }>('/events');
+        if (response.success) {
+          setEvents(response.data.map(event => ({
+            _id: event._id as string,
+            title: event.title
+          })));
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch events:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (user?.role === 'ORGANIZER') {
+      fetchEvents();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user?.role]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'number' ? parseInt(value) || 0 : value
+    }));
+  };
+
+  const handleRecurringChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isRecurring = e.target.checked;
+    setFormData(prev => ({
+      ...prev,
+      isRecurring,
+      recurrencePattern: isRecurring ? {
+        type: 'WEEKLY',
+        interval: 1,
+      } : undefined
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    setSuccess(null);
+    
+    try {
+      // Validate required fields
+      if (!formData.name || !formData.eventId || !formData.startTime || !formData.endTime || !formData.date) {
+        setError('Please fill in all required fields');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Validate time format
+      if (!/^\d{2}:\d{2}$/.test(formData.startTime) || !/^\d{2}:\d{2}$/.test(formData.endTime)) {
+        setError('Please use HH:mm format for times');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Validate check-in times if provided
+      if (formData.checkInStart && !/^\d{2}:\d{2}$/.test(formData.checkInStart)) {
+        setError('Please use HH:mm format for check-in start time');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      if (formData.checkInEnd && !/^\d{2}:\d{2}$/.test(formData.checkInEnd)) {
+        setError('Please use HH:mm format for check-in end time');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const response = await apiService.post<{ success: boolean; data: any; message?: string }>(
+        '/shifts',
+        formData
+      );
+      
+      if (response.success) {
+        setSuccess('Shift created successfully!');
+        setTimeout(() => {
+          navigate(`/shifts/${response.data._id}`);
+        }, 1500);
+      } else {
+        setError(response.message || 'Failed to create shift');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to create shift');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-4 sm:p-6 lg:p-8"
+    >
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" onClick={() => navigate('/shifts')} className="p-0">
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-tangerine-500 to-orchid-500 bg-clip-text text-transparent">
+          Create New Shift
+        </h1>
+      </div>
+
+      <Card className="p-6 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <div className="border-b border-gray-200 pb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Shift Name *"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., Morning Registration Shift"
+                required
+              />
+              
+              <Input
+                label="Event *"
+                name="eventId"
+                type="select"
+                value={formData.eventId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Event</option>
+                {events.map(event => (
+                  <option key={event._id} value={event._id}>{event.title}</option>
+                ))}
+              </Input>
+            </div>
+            
+            <div className="mt-4">
+              <Input
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe the shift responsibilities..."
+                multiline
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Schedule */}
+          <div className="border-b border-gray-200 pb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Schedule</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                label="Date *"
+                name="date"
+                type="date"
+                value={formData.date as string}
+                onChange={handleChange}
+                required
+              />
+              
+              <Input
+                label="Start Time *"
+                name="startTime"
+                type="time"
+                value={formData.startTime}
+                onChange={handleChange}
+                required
+              />
+              
+              <Input
+                label="End Time *"
+                name="endTime"
+                type="time"
+                value={formData.endTime}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="mt-4 flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isRecurring"
+                checked={formData.isRecurring}
+                onChange={handleRecurringChange}
+                className="w-4 h-4 text-tangerine-500 rounded focus:ring-tangerine-500"
+              />
+              <label htmlFor="isRecurring" className="text-gray-700 cursor-pointer">
+                This is a recurring shift
+              </label>
+            </div>
+            
+            {formData.isRecurring && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-4 p-4 bg-gray-50 rounded-lg"
+              >
+                <h3 className="font-semibold text-gray-800 mb-2">Recurrence Pattern</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Recurrence Type"
+                    name="recurrenceType"
+                    type="select"
+                    value={formData.recurrencePattern?.type || 'WEEKLY'}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      recurrencePattern: {
+                        ...prev.recurrencePattern,
+                        type: e.target.value as any
+                      }
+                    }))}
+                  >
+                    <option value="DAILY">Daily</option>
+                    <option value="WEEKLY">Weekly</option>
+                    <option value="MONTHLY">Monthly</option>
+                  </Input>
+                  
+                  <Input
+                    label="Interval"
+                    name="interval"
+                    type="number"
+                    value={formData.recurrencePattern?.interval || 1}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      recurrencePattern: {
+                        ...prev.recurrencePattern,
+                        interval: parseInt(e.target.value) || 1
+                      }
+                    }))}
+                    min={1}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Capacity & Settings */}
+          <div className="border-b border-gray-200 pb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Capacity & Settings</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Capacity *"
+                name="capacity"
+                type="number"
+                value={formData.capacity}
+                onChange={handleChange}
+                min={1}
+                required
+              />
+              
+              <Input
+                label="Break Duration (minutes)"
+                name="breakDuration"
+                type="number"
+                value={formData.breakDuration}
+                onChange={handleChange}
+                min={0}
+              />
+            </div>
+            
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Check-in Start Time"
+                name="checkInStart"
+                type="time"
+                value={formData.checkInStart}
+                onChange={handleChange}
+              />
+              
+              <Input
+                label="Check-in End Time"
+                name="checkInEnd"
+                type="time"
+                value={formData.checkInEnd}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="mt-4">
+              <Input
+                label="Shift Color"
+                name="color"
+                type="color"
+                value={formData.color}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* Error and Success Messages */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
+              {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-600 p-4 rounded-lg">
+              {success}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div className="flex gap-4 pt-6">
+            <Button type="button" variant="outline" onClick={() => navigate('/shifts')}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              <Save className="w-5 h-5 mr-2" />
+              {isSubmitting ? 'Creating...' : 'Create Shift'}
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default ShiftCreatePage;

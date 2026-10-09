@@ -1,0 +1,533 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   EVENTFLOW DESIGN SYSTEM - CSS VARIABLES
+   ============================================ */
+
+:root {
+  /* Primary Colors - Tangerine/Coral */
+  --primary-50: #FFF7F0;
+  --primary-100: #FFEADB;
+  --primary-200: #FFD4B8;
+  --primary-300: #FFB88C;
+  --primary-400: #FF9559;
+  --primary-500: #FF7A33;
+  --primary-600: #E66A25;
+  --primary-700: #CC581A;
+  --primary-800: #B34812;
+  --primary-900: #99380C;
+  
+  /* Secondary Colors - Apricot/Saffron */
+  --secondary-50: #FFFBF0;
+  --secondary-100: #FFF4E0;
+  --secondary-200: #FFE8C3;
+  --secondary-300: #FFD699;
+  --secondary-400: #FFC166;
+  --secondary-500: #FFAB33;
+  --secondary-600: #E69525;
+  --secondary-700: #CC7E1A;
+  --secondary-800: #B36812;
+  --secondary-900: #99520C;
+  
+  /* Accent Colors - Orchid/Lilac */
+  --accent-50: #F9F7FF;
+  --accent-100: #F0EFFF;
+  --accent-200: #E3D9FF;
+  --accent-300: #D3B8FF;
+  --accent-400: #C28CFF;
+  --accent-500: #B064FF;
+  --accent-600: #9945E6;
+  --accent-700: #8033CC;
+  --accent-800: #6625B3;
+  --accent-900: #4D1A99;
+  
+  /* Neutral Colors */
+  --warm-ivory: #FFFBF5;
+  --soft-cream: #FFF7ED;
+  --sand: #F5E6D3;
+  --charcoal: #2D2D2D;
+  --charcoal-soft: #4A4A4A;
+  --charcoal-light: #6B6B6B;
+  
+  /* Semantic Colors */
+  --success: #10B981;
+  --success-light: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-light: #FEF3C7;
+  --error: #EF4444;
+  --error-light: #FEE2E2;
+  --info: #3B82F6;
+  --info-light: #DBEAFE;
+  
+  /* Typography */
+  --font-display: 'Sora', sans-serif;
+  --font-body: 'Manrope', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Spacing */
+  --header-height: 64px;
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 80px;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-primary: 0 4px 14px 0 rgba(255, 122, 51, 0.39);
+  --shadow-accent: 0 4px 14px 0 rgba(176, 100, 255, 0.39);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+  --transition-smooth: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Background */
+  --bg-primary: var(--warm-ivory);
+  --bg-secondary: var(--soft-cream);
+  --bg-surface: #FFFFFF;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Text */
+  --text-primary: var(--charcoal);
+  --text-secondary: var(--charcoal-soft);
+  --text-muted: var(--charcoal-light);
+  --text-inverse: #FFFFFF;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+  --gradient-mesh: radial-gradient(at 40% 20%, var(--primary-500) 0px, transparent 50%), radial-gradient(at 80% 0%, var(--accent-500) 0px, transparent 50%), radial-gradient(at 0% 50%, var(--secondary-500) 0px, transparent 50%);
+}
+
+/* Dark Mode Variables */
+.dark {
+  --bg-primary: #0F0F23;
+  --bg-secondary: #16213E;
+  --bg-surface: #1A1A2E;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-inverse: var(--charcoal);
+  
+  --primary-50: #1A120B;
+  --primary-100: #2D1E17;
+  --primary-200: #402A23;
+  --primary-300: #593D30;
+  --primary-400: #7C5340;
+  --primary-500: #A66F52;
+  --primary-600: #D18B64;
+  --primary-700: #FF9F70;
+  --primary-800: #FFB88C;
+  --primary-900: #FFD4B8;
+  
+  --secondary-50: #1A140B;
+  --secondary-100: #2D2317;
+  --secondary-200: #403223;
+  --secondary-300: #594830;
+  --secondary-400: #7C6340;
+  --secondary-500: #A68552;
+  --secondary-600: #D1A764;
+  --secondary-700: #FFC170;
+  --secondary-800: #FFD699;
+  --secondary-900: #FFE8C3;
+  
+  --accent-50: #1A0B2D;
+  --accent-100: #2D1740;
+  --accent-200: #402359;
+  --accent-300: #59307C;
+  --accent-400: #7C40A6;
+  --accent-500: #A652D1;
+  --accent-600: #D164FF;
+  --accent-700: #E3B8FF;
+  --accent-800: #F0EFFF;
+  --accent-900: #F9F7FF;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
+h3 { font-size: clamp(1.25rem, 3vw, 1.875rem); }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--primary-500);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-600);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+code {
+  background: var(--bg-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+pre {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--charcoal-light);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--charcoal-soft);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   SELECTION STYLING
+   ============================================ */
+
+::selection {
+  background: var(--primary-500);
+  color: white;
+}
+
+.dark ::selection {
+  background: var(--primary-600);
+  color: white;
+}
+
+/* ============================================
+   FORMS
+   ============================================ */
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+input:focus,
+button:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* Remove default input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-mesh {
+  background: var(--gradient-mesh);
+  background-size: 200% 200%;
+  animation: mesh-gradient 8s ease infinite;
+}
+
+@keyframes mesh-gradient {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+  background: rgba(15, 15, 35, 0.5);
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+.a {
+  transition: all var(--transition-fast);
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Truncate text */
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Safe area padding for mobile */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* ============================================
+   ANIMATION UTILITIES
+   ============================================ */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Skeleton loading animation */
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Shimmer effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Mobile-first approach */
+@media (min-width: 640px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --sidebar-width: 0px;
+    --header-height: 56px;
+  }
+  
+  body {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1280px) {
+  :root {
+    --sidebar-width: 300px;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  a {
+    color: var(--primary-500);
+    text-decoration: underline;
+  }
+}
